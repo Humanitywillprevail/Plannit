@@ -1,69 +1,87 @@
-import Image from "next/image";
+import Link from "next/link";
+import { CalendarDays, Sigma, Paperclip } from "lucide-react";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import GradeBadge from "@/components/ui/GradeBadge";
 
-export default function Home() {
+const FEATURES = [
+  {
+    icon: CalendarDays,
+    title: "학기별 기록",
+    description: "과목마다 과제, 시험, 발표 등 한 일을 그때그때 남겨두세요.",
+  },
+  {
+    icon: Sigma,
+    title: "자동 평균 계산",
+    description: "학점과 성적만 입력하면 학기 평균이 자동으로 계산돼요.",
+  },
+  {
+    icon: Paperclip,
+    title: "포트폴리오용 첨부파일",
+    description: "결과물 이미지나 문서를 기록에 붙여 나중에 그대로 꺼내 쓰세요.",
+  },
+];
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="flex flex-1 flex-col">
+      <section className="mx-auto w-full max-w-3xl px-6 pt-16 pb-12 text-center">
+        <h1 className="font-display text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
+          학기별로 내가 한 일을
+          <br />
+          기록하고 정리하는 공간
+        </h1>
+        <p className="mt-4 text-ink-secondary">
+          과목, 성적, 과제 기록을 한곳에 모아두면 포트폴리오와 자기소개서를 쓸 때 바로 꺼내 쓸 수 있어요.
+        </p>
+        <div className="mt-8">
+          <Link href="/signup">
+            <Button size="lg">무료로 시작하기</Button>
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="mx-auto w-full max-w-3xl px-6 pb-16">
+        <Card className="pointer-events-none select-none">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <p className="text-lg font-semibold">2026-1학기</p>
+            <span className="shrink-0 text-sm font-semibold tabular-nums text-accent">
+              평균 4.12
+            </span>
+          </div>
+          <ul className="space-y-1.5">
+            <li className="flex items-center justify-between gap-3 text-sm">
+              <span className="truncate text-ink-secondary">자료구조</span>
+              <GradeBadge grade="A+" className="shrink-0" />
+            </li>
+            <li className="flex items-center justify-between gap-3 text-sm">
+              <span className="truncate text-ink-secondary">데이터베이스</span>
+              <GradeBadge grade="A0" className="shrink-0" />
+            </li>
+          </ul>
+          <div className="mt-4 border-t border-line pt-4">
+            <p className="text-sm">
+              <Badge className="mr-2 align-middle">과제</Badge>
+              팀 프로젝트 API 설계 문서 작성
+            </p>
+          </div>
+        </Card>
+      </section>
+
+      <section className="mx-auto w-full max-w-3xl px-6 pb-20">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, description }) => (
+            <Card key={title}>
+              <span className="mb-3 inline-flex size-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                <Icon className="size-4.5" />
+              </span>
+              <p className="mb-1 font-semibold">{title}</p>
+              <p className="text-sm text-ink-secondary">{description}</p>
+            </Card>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

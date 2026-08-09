@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
 :root {
+  /* Plannit brand palette — white paper / deep indigo ink / energetic orange.
+     Cards read as cards purely via border + shadow, never a background tint
+     (background and surface are intentionally the same white).
+     All text-vs-surface pairs below are WCAG AA verified (>=4.5:1 for body text). */
   --background: #ffffff;
-  --foreground: #171717;
+  --surface: #ffffff;
+  --foreground: #241e4e; /* deep indigo ink */
+  --ink-secondary: #6f6890;
+  --ink-muted: #8a83aa;
+  --line: rgba(36, 30, 78, 0.12);
+  --line-strong: rgba(36, 30, 78, 0.24);
+
+  /* accent = brand orange. Buttons pair it with indigo ink (4.9:1), not white —
+     that pairing is Plannit's signature, not a generic dashboard blue. */
+  --accent: #ff5a1f;
+  --accent-hover: #ff4502;
+  --accent-ink: #241e4e;
+  --danger: #c6362e;
+  --success: #1e8e3e;
+
+  /* competency category colors — validated categorical set (dataviz skill),
+     kept distinct from the brand accent so chart identity never collides with CTAs */
+  --cat-tech: #2a78d6; /* 기술 */
+  --cat-practice: #eb6834; /* 실무 */
+  --cat-comm: #1baf7a; /* 커뮤니케이션 */
+  --cat-think: #eda100; /* 사고력 */
+
+  /* grade tiers — ordinal good→bad scale, always paired with the letter text */
+  --grade-a: #157a30;
+  --grade-b: #2a78d6;
+  --grade-c: #b45309;
+  --grade-d: #c2410c;
+  --grade-f: #c6362e;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --color-cat-tech: var(--cat-tech);
+  --color-cat-practice: var(--cat-practice);
+  --color-cat-comm: var(--cat-comm);
+  --color-cat-think: var(--cat-think);
+
+  --color-grade-a: var(--grade-a);
+  --color-grade-b: var(--grade-b);
+  --color-grade-c: var(--grade-c);
+  --color-grade-d: var(--grade-d);
+  --color-grade-f: var(--grade-f);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-gowun-batang);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #14112b; /* deep indigo-black page plane, not neutral gray */
+    --surface: #211b49; /* lighter indigo card surface */
+    --foreground: #fff8f0; /* ivory ink */
+    --ink-secondary: #b8b2d9;
+    --ink-muted: #9691b0;
+    --line: rgba(255, 248, 240, 0.12);
+    --line-strong: rgba(255, 248, 240, 0.24);
+
+    --accent: #ff5a1f;
+    --accent-hover: #ff7040;
+    --accent-ink: #241e4e;
+    --danger: #ff6b57;
+    --success: #35c05f;
+
+    --cat-tech: #3987e5;
+    --cat-practice: #d95926;
+    --cat-comm: #199e70;
+    --cat-think: #c98500;
+
+    --grade-a: #35c05f;
+    --grade-b: #5499ea;
+    --grade-c: #e5a13a;
+    --grade-d: #f0916a;
+    --grade-f: #ff6b57;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

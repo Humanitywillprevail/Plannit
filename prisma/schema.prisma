@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// userId는 Supabase Auth(auth.users.id, uuid)를 가리킨다.
+// Prisma가 관리하지 않는 스키마라 관계(relation)가 아닌 평범한 컬럼으로 둔다.
+model Semester {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  name      String // 자유 입력, 예: "2024-1학기"
+  createdAt DateTime @default(now())
+  courses   Course[]
+
+  @@index([userId])
+}
+
+model Course {
+  id           Int                @id @default(autoincrement())
+  userId       String
+  semesterId   Int
+  name         String
+  credit       Int
+  grade        String? // "A+" | "A0" | "B+" | "B0" | "C+" | "C0" | "D+" | "D0" | "F" | null(미입력)
+  createdAt    DateTime           @default(now())
+  semester     Semester           @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  records      Record[]
+  competencies CourseCompetency[]
+
+  @@index([userId])
+}
+
+model Record {
+  id          Int          @id @default(autoincrement())
+  userId      String
+  courseId    Int
+  type        String // "assignment" | "exam" | "project" | "other"
+  content     String
+  createdAt   DateTime     @default(now())
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attachments Attachment[]
+
+  @@index([userId])
+}
+
+// 포트폴리오용 첨부파일. 실제 파일은 오브젝트 스토리지(S3 호환)에 저장하고 공개 URL만 둔다.
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  recordId  Int
+  fileName  String // 원본 파일명 (표시용)
+  url       String // 오브젝트 스토리지의 공개 URL
+  mimeType  String
+  size      Int // bytes
+  createdAt DateTime @default(now())
+  record    Record   @relation(fields: [recordId], references: [id], onDelete: Cascade)
+}
+
+// 역량 사전 (마스터 데이터). 코드상의 keywordDictionary.ts를 seed 스크립트로 반영한다.
+model Competency {
+  id       Int                @id @default(autoincrement())
+  key      String             @unique // e.g. "programming"
+  name     String // "프로그래밍"
+  category String? // "기술" | "소프트스킬" 등
+  keywords String // comma-separated, 참고용 (실제 매칭은 keywordDictionary.ts 기준)
+  courses  CourseCompetency[]
+}
+
+// 과목 x 역량 분석 결과
+model CourseCompetency {
+  id              Int    @id @default(autoincrement())
+  courseId        Int
+  competencyId    Int
+  score           Int // 매칭 강도 (키워드 매칭 횟수 기반)
+  matchedKeywords String // comma-separated, 실제 매칭된 키워드
+  evidence        String? // 매칭이 발생한 텍스트 스니펫
+
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  competency Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, competencyId])
+}
