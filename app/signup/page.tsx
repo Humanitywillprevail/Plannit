@@ -6,20 +6,26 @@ import Button from "@/components/ui/Button";
 
 // searchParams는 요청 시점에만 알 수 있으므로 이 부분만 스트리밍하고,
 // 폼 자체는 정적 셸로 프리렌더한다.
-async function SignupError({
+async function SignupStatus({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; sent?: string }>;
 }) {
-  const { error } = await searchParams;
-  if (!error) return null;
-  return <p className="text-sm text-danger">{error}</p>;
+  const { error, sent } = await searchParams;
+  if (error) return <p className="text-sm text-danger">{error}</p>;
+  if (sent)
+    return (
+      <p className="text-sm text-accent">
+        {sent}로 확인 이메일을 보냈어요. 메일함의 링크를 눌러야 가입이 완료돼요.
+      </p>
+    );
+  return null;
 }
 
 export default function SignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; sent?: string }>;
 }) {
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-6 py-8">
@@ -52,7 +58,7 @@ export default function SignupPage({
             />
           </div>
           <Suspense fallback={null}>
-            <SignupError searchParams={searchParams} />
+            <SignupStatus searchParams={searchParams} />
           </Suspense>
           <Button type="submit" className="w-full">
             회원가입
