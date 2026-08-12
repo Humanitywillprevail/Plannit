@@ -3,6 +3,9 @@ import Link from "next/link";
 import { login } from "@/lib/actions/auth";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import Turnstile from "@/components/Turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 // searchParams는 요청 시점에만 알 수 있으므로 이 부분만 스트리밍하고,
 // 폼 자체는 정적 셸로 프리렌더한다.
@@ -49,6 +52,7 @@ export default function LoginPage({
               className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
             />
           </div>
+          <Turnstile siteKey={TURNSTILE_SITE_KEY} />
           <Suspense fallback={null}>
             <LoginError searchParams={searchParams} />
           </Suspense>

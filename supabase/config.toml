@@ -211,10 +211,13 @@ token_verifications = 30
 web3 = 30
 
 # Configure one of the supported captcha providers: `hcaptcha`, `turnstile`.
-# [auth.captcha]
-# enabled = true
-# provider = "hcaptcha"
-# secret = ""
+[auth.captcha]
+enabled = true
+provider = "turnstile"
+# Cloudflare의 공식 "항상 통과" 테스트 secret key — 로컬 개발 전용.
+# 배포된 프로젝트는 Supabase 대시보드 > Authentication > Attack Protection에서
+# 실제 Cloudflare Turnstile secret key로 별도 설정해야 한다 (이 파일은 로컬 CLI 스택에만 적용됨).
+secret = "1x0000000000000000000000000000000AA"
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.

@@ -12,6 +12,9 @@ function authErrorMessage(error: AuthError, fallback: string): string {
   if (error.name === "AuthRetryableFetchError" || error.status === 0) {
     return "인증 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.";
   }
+  if (error.code === "captcha_failed") {
+    return "보안 인증에 실패했습니다. 페이지를 새로고침한 뒤 다시 시도해주세요.";
+  }
   return error.message || fallback;
 }
 
@@ -27,6 +30,7 @@ async function getOrigin(): Promise<string> {
 export async function signup(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const captchaToken = String(formData.get("cf-turnstile-response") ?? "");
 
   if (!email || !password) {
     redirect(`/signup?error=${encodeURIComponent("이메일과 비밀번호를 입력해주세요.")}`);
@@ -34,13 +38,16 @@ export async function signup(formData: FormData): Promise<void> {
   if (password.length < 6) {
     redirect(`/signup?error=${encodeURIComponent("비밀번호는 6자 이상이어야 합니다.")}`);
   }
+  if (!captchaToken) {
+    redirect(`/signup?error=${encodeURIComponent("보안 인증을 완료해주세요.")}`);
+  }
 
   const origin = await getOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: `${origin}/auth/confirm` },
+    options: { emailRedirectTo: `${origin}/auth/confirm`, captchaToken },
   });
 
   if (error) {
@@ -59,17 +66,27 @@ export async function signup(formData: FormData): Promise<void> {
 export async function login(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const captchaToken = String(formData.get("cf-turnstile-response") ?? "");
 
   if (!email || !password) {
     redirect(`/login?error=${encodeURIComponent("이메일과 비밀번호를 입력해주세요.")}`);
   }
+  if (!captchaToken) {
+    redirect(`/login?error=${encodeURIComponent("보안 인증을 완료해주세요.")}`);
+  }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+    options: { captchaToken },
+  });
 
   if (error) {
     let message: string;
     if (error.name === "AuthRetryableFetchError" || error.status === 0) {
+      message = authErrorMessage(error, "로그인에 실패했습니다.");
+    } else if (error.code === "captcha_failed") {
       message = authErrorMessage(error, "로그인에 실패했습니다.");
     } else if (error.code === "email_not_confirmed") {
       message = "이메일 확인이 아직 안 됐어요. 받은 메일함의 확인 링크를 눌러주세요.";

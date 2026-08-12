@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono, Gowun_Batang } from "next/font/google";
 import { getCurrentUser } from "@/lib/auth/session";
 import { logout } from "@/lib/actions/auth";
@@ -26,9 +27,28 @@ const gowunBatang = Gowun_Batang({
   weight: ["400", "700"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const DESCRIPTION = "학기별 커리어 기록 & 역량 분석 서비스";
+
 export const metadata: Metadata = {
-  title: "Plannit",
-  description: "학기별 커리어 기록 & 역량 분석 서비스",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Plannit",
+    template: "%s | Plannit",
+  },
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Plannit",
+    description: DESCRIPTION,
+    siteName: "Plannit",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plannit",
+    description: DESCRIPTION,
+  },
 };
 
 // 로그인 여부에 따라 갈리는 부분만 별도 컴포넌트로 분리해 Suspense에 담는다.
@@ -97,6 +117,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </nav>
         </header>
         <div className="flex flex-1 flex-col">{children}</div>
+        <footer className="border-t border-line py-6">
+          <div className="mx-auto flex max-w-3xl items-center justify-center gap-4 px-6 text-xs text-ink-muted">
+            <Link href="/terms" className="hover:text-ink-secondary">
+              이용약관
+            </Link>
+            <Link href="/privacy" className="hover:text-ink-secondary">
+              개인정보처리방침
+            </Link>
+          </div>
+        </footer>
+        <Analytics />
       </body>
     </html>
   );

@@ -3,6 +3,9 @@ import Link from "next/link";
 import { signup } from "@/lib/actions/auth";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import Turnstile from "@/components/Turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 // searchParams는 요청 시점에만 알 수 있으므로 이 부분만 스트리밍하고,
 // 폼 자체는 정적 셸로 프리렌더한다.
@@ -57,12 +60,24 @@ export default function SignupPage({
               className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
             />
           </div>
+          <Turnstile siteKey={TURNSTILE_SITE_KEY} />
           <Suspense fallback={null}>
             <SignupStatus searchParams={searchParams} />
           </Suspense>
           <Button type="submit" className="w-full">
             회원가입
           </Button>
+          <p className="text-center text-xs text-ink-muted">
+            가입하면{" "}
+            <Link href="/terms" className="hover:text-ink-secondary hover:underline">
+              이용약관
+            </Link>{" "}
+            및{" "}
+            <Link href="/privacy" className="hover:text-ink-secondary hover:underline">
+              개인정보처리방침
+            </Link>
+            에 동의하는 것으로 간주됩니다.
+          </p>
         </form>
       </Card>
       <p className="mt-4 text-center text-sm text-ink-secondary">
