@@ -4,7 +4,13 @@ import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
 import { addRecord, deleteRecord } from "@/lib/actions/records";
 import { updateCourse } from "@/lib/actions/courses";
-import { RECORD_TYPE_OPTIONS, recordTypeLabel, GRADE_OPTIONS } from "@/lib/types";
+import {
+  RECORD_TYPE_OPTIONS,
+  recordTypeLabel,
+  GRADE_OPTIONS,
+  SELF_RATING_OPTIONS,
+} from "@/lib/types";
+import StarRating from "@/components/ui/StarRating";
 import DeleteForm from "@/components/DeleteForm";
 import AttachmentList from "@/components/AttachmentList";
 import RecordTypeField from "@/components/RecordTypeField";
@@ -56,7 +62,14 @@ export default async function CourseDetailPage({
         subtitle={`${course.semester.name} · ${course.credit}학점`}
         backHref={`/semesters/${course.semesterId}`}
         backLabel={course.semester.name}
-        action={<GradeBadge grade={course.grade} className="text-sm" />}
+        action={
+          <div className="flex items-center gap-2">
+            {course.selfRating && (
+              <StarRating rating={course.selfRating} title="얼마나 이해했나요?" />
+            )}
+            <GradeBadge grade={course.grade} className="text-sm" />
+          </div>
+        }
       />
 
       <section className="mb-8">
@@ -89,6 +102,23 @@ export default async function CourseDetailPage({
                 {GRADE_OPTIONS.map((g) => (
                   <option key={g} value={g}>
                     {g}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm text-ink-secondary">
+                얼마나 이해했나요?
+              </label>
+              <select
+                name="selfRating"
+                defaultValue={course.selfRating ?? ""}
+                className="w-24 rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
+              >
+                <option value="">미평가</option>
+                {SELF_RATING_OPTIONS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}점
                   </option>
                 ))}
               </select>

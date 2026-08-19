@@ -27,3 +27,6 @@ export function gradeTier(grade: string): "A" | "B" | "C" | "D" | "F" {
   }
   return "F";
 }
+
+// 이해도 자기평가(별점). 성적/키워드 분석과는 별개의 주관적 지표.
+export const SELF_RATING_OPTIONS = [1, 2, 3, 4, 5] as const;

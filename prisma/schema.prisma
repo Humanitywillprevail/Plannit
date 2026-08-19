@@ -31,6 +31,7 @@ model Course {
   name         String
   credit       Int
   grade        String? // "A+" | "A0" | "B+" | "B0" | "C+" | "C0" | "D+" | "D0" | "F" | null(미입력)
+  selfRating   Int? // 자기평가: 이 과목을 얼마나 이해했다고 느끼는지 (1~5). 성적/키워드 분석과는 별개의 주관적 지표.
   createdAt    DateTime           @default(now())
   semester     Semester           @relation(fields: [semesterId], references: [id], onDelete: Cascade)
   records      Record[]

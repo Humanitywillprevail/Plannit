@@ -11,6 +11,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import QuickAddCourse from "@/components/QuickAddCourse";
 import { computeGpa, formatGpa } from "@/lib/gpa";
+import StarRating from "@/components/ui/StarRating";
 
 // 로그인 사용자 전용 데이터라 정적 프리렌더 이점이 없다 — instant-navigation 검증에서 제외.
 export const instant = false;
@@ -77,6 +78,9 @@ export default async function SemesterDetailPage({
                   <span className="text-sm text-ink-secondary">
                     {course.credit}학점
                   </span>
+                  {course.selfRating && (
+                    <StarRating rating={course.selfRating} title="얼마나 이해했나요?" />
+                  )}
                   <GradeBadge grade={course.grade} className="ml-auto" />
                 </Link>
                 <DeleteForm

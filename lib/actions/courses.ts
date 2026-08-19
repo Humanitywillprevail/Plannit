@@ -38,6 +38,8 @@ export async function updateCourse(formData: FormData): Promise<void> {
   const id = Number(formData.get("id"));
   const credit = Number(formData.get("credit"));
   const grade = String(formData.get("grade") ?? "").trim();
+  const selfRatingRaw = String(formData.get("selfRating") ?? "").trim();
+  const selfRating = selfRatingRaw ? Number(selfRatingRaw) : null;
   if (!id) return;
 
   const course = await prisma.course.findFirst({ where: { id, userId } });
@@ -48,6 +50,7 @@ export async function updateCourse(formData: FormData): Promise<void> {
     data: {
       credit: Number.isFinite(credit) ? credit : 0,
       grade: grade || null,
+      selfRating: selfRating && selfRating >= 1 && selfRating <= 5 ? selfRating : null,
     },
   });
 
