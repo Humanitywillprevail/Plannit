@@ -6,7 +6,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import GradeBadge from "@/components/ui/GradeBadge";
 import Button from "@/components/ui/Button";
 import QuickAddSemester from "@/components/QuickAddSemester";
-import { GraduationCap, Sparkles, BookOpen } from "lucide-react";
+import { GraduationCap, Sparkles, BookOpen, Target } from "lucide-react";
 import { computeGpa, formatGpa } from "@/lib/gpa";
 
 // 로그인 사용자 전용 데이터라 정적 프리렌더 이점이 없다 — instant-navigation 검증에서 제외.
@@ -41,6 +41,12 @@ export default async function SemestersPage() {
             <Button variant="secondary" size="sm">
               <BookOpen className="size-3.5" />
               포트폴리오
+            </Button>
+          </Link>
+          <Link href="/gap-analysis">
+            <Button variant="secondary" size="sm">
+              <Target className="size-3.5" />
+              직무 갭 분석
             </Button>
           </Link>
         </div>
