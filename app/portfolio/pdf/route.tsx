@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { Document, Page, Text, View, StyleSheet, Font, renderToBuffer } from "@react-pdf/renderer";
 import { prisma } from "@/lib/db/client";
-import { Prisma } from "@/lib/generated/prisma/client";
 import { requireUserId } from "@/lib/auth/session";
-import { portfolioEligibleWhere } from "@/lib/actions/portfolio";
+import { portfolioGeneratedWhere } from "@/lib/portfolio/queries";
 import { NARRATIVE_SECTION_LABELS, type RecordNarrative } from "@/lib/analysis/generateNarrative";
 
 // @react-pdf/renderer는 한글 글리프를 기본 내장하지 않는다 — 등록 안 하면 한글이
@@ -26,10 +25,7 @@ export async function GET() {
   const userId = await requireUserId();
 
   const records = await prisma.record.findMany({
-    where: {
-      ...portfolioEligibleWhere(userId),
-      narrative: { not: Prisma.DbNull },
-    },
+    where: portfolioGeneratedWhere(userId),
     orderBy: { createdAt: "desc" },
     include: { course: { select: { name: true } } },
   });

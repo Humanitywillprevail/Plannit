@@ -1,12 +1,13 @@
-import { BookOpen, Sparkles } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
-import { portfolioEligibleWhere, generatePendingNarratives } from "@/lib/actions/portfolio";
+import { portfolioEligibleWhere } from "@/lib/portfolio/queries";
 import { NARRATIVE_SECTION_LABELS, type RecordNarrative } from "@/lib/analysis/generateNarrative";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
+import GeneratePortfolioForm from "@/components/GeneratePortfolioForm";
 
 // 로그인 사용자 전용 데이터라 정적 프리렌더 이점이 없다 — instant-navigation 검증에서 제외.
 export const instant = false;
@@ -40,29 +41,14 @@ export default async function PortfolioPage() {
         }
       />
 
-      {pending.length > 0 && (
-        <Card className="mb-6">
-          <form
-            action={generatePendingNarratives}
-            className="flex flex-wrap items-center justify-between gap-3"
-          >
-            <p className="text-sm text-ink-secondary">
-              아직 이야기로 만들지 않은 기록이 {pending.length}개 있어요.
-            </p>
-            <Button type="submit" size="sm">
-              <Sparkles className="size-3.5" />
-              포트폴리오 만들기
-            </Button>
-          </form>
-        </Card>
-      )}
+      {pending.length > 0 && <GeneratePortfolioForm pendingCount={pending.length} />}
 
-      {generated.length === 0 ? (
+      {generated.length === 0 && pending.length === 0 ? (
         <EmptyState
           icon={<BookOpen className="size-5" />}
           message="과목 상세 페이지에서 기록을 작성할 때 '포트폴리오용 상세 입력'을 채우면 이 자리에 포트폴리오가 채워져요."
         />
-      ) : (
+      ) : generated.length > 0 ? (
         <ul className="space-y-4">
           {generated.map((r) => {
             const narrative = r.narrative as unknown as RecordNarrative;
@@ -83,7 +69,7 @@ export default async function PortfolioPage() {
             );
           })}
         </ul>
-      )}
+      ) : null}
     </main>
   );
 }
