@@ -14,7 +14,7 @@ declare global {
 }
 
 const SCRIPT_ID = "cf-turnstile-script";
-const SCRIPT_SRC = "https://challenge.cloudflare.com/turnstile/v0/api.js";
+const SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js";
 
 // 폼 안에 위젯을 렌더링하면 Turnstile이 자기 컨테이너 안에
 // name="cf-turnstile-response" 히든 인풋을 스스로 심어준다.

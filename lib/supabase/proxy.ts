@@ -9,6 +9,8 @@ const PUBLIC_PREFIXES = [
   "/privacy",
   "/opengraph-image",
   "/twitter-image",
+  // Supabase Auth Hook(서버 간 웹훅)이 호출하는 경로 — 브라우저 세션이 없어서 로그인 리다이렉트 대상이 아니다.
+  "/api/auth/send-email",
 ];
 
 export async function updateSession(request: NextRequest) {
