@@ -5,6 +5,14 @@ import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
 import { reanalyzeCourse } from "@/lib/analysis/reanalyze";
 import { deleteUploadedFile, saveUploadedFile, MAX_FILES_PER_UPLOAD } from "@/lib/files";
+import { PORTFOLIO_FIELD_OPTIONS } from "@/lib/types";
+
+// 빈 문자열은 "입력 안 함"이므로 null로 저장 — buildCompetencyReport 등
+// 다른 로직이 "필드가 존재하지만 비어있음"과 구분할 필요가 없어서 단순하게 둔다.
+function readOptionalField(formData: FormData, key: string): string | null {
+  const value = String(formData.get(key) ?? "").trim();
+  return value || null;
+}
 
 export async function addRecord(formData: FormData): Promise<void> {
   const userId = await requireUserId();
@@ -20,8 +28,12 @@ export async function addRecord(formData: FormData): Promise<void> {
   });
   if (!course) return;
 
+  const portfolioFields = Object.fromEntries(
+    PORTFOLIO_FIELD_OPTIONS.map(({ value }) => [value, readOptionalField(formData, value)])
+  );
+
   const record = await prisma.record.create({
-    data: { userId, courseId, type, content },
+    data: { userId, courseId, type, content, ...portfolioFields },
   });
   await reanalyzeCourse(courseId);
 

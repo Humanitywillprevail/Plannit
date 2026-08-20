@@ -9,6 +9,7 @@ import {
   recordTypeLabel,
   GRADE_OPTIONS,
   SELF_RATING_OPTIONS,
+  PORTFOLIO_FIELD_OPTIONS,
 } from "@/lib/types";
 import StarRating from "@/components/ui/StarRating";
 import DeleteForm from "@/components/DeleteForm";
@@ -153,6 +154,25 @@ export default async function CourseDetailPage({
                 className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
               />
             </div>
+            <details className="rounded-lg border border-line px-3 py-2">
+              <summary className="cursor-pointer text-sm text-ink-secondary">
+                포트폴리오용 상세 입력 (선택)
+              </summary>
+              <div className="mt-3 space-y-3">
+                {PORTFOLIO_FIELD_OPTIONS.map((field) => (
+                  <div key={field.value}>
+                    <label className="mb-1 block text-sm text-ink-secondary">
+                      {field.label}
+                    </label>
+                    <textarea
+                      name={field.value}
+                      rows={2}
+                      className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
+                    />
+                  </div>
+                ))}
+              </div>
+            </details>
             <div>
               <label className="mb-1 block text-sm text-ink-secondary">
                 첨부파일{" "}
@@ -182,25 +202,46 @@ export default async function CourseDetailPage({
           />
         ) : (
           <ul className="space-y-2">
-            {course.records.map((r) => (
-              <Card key={r.id} as="li" padded>
-                <div className="flex items-start justify-between gap-3 text-sm">
-                  <p>
-                    <Badge className="mr-2 align-middle">
-                      {recordTypeLabel(r.type)}
-                    </Badge>
-                    {r.content}
-                  </p>
-                  <DeleteForm
-                    action={deleteRecord}
-                    hiddenFields={{ id: r.id }}
-                    confirmMessage="이 기록을 삭제할까요? 첨부파일도 함께 삭제됩니다."
-                    className="shrink-0 rounded-lg px-2 py-1 text-xs text-danger hover:bg-danger/10"
-                  />
-                </div>
-                <AttachmentList attachments={r.attachments} />
-              </Card>
-            ))}
+            {course.records.map((r) => {
+              const filledPortfolioFields = PORTFOLIO_FIELD_OPTIONS.filter(
+                (field) => r[field.value]
+              );
+
+              return (
+                <Card key={r.id} as="li" padded>
+                  <div className="flex items-start justify-between gap-3 text-sm">
+                    <p>
+                      <Badge className="mr-2 align-middle">
+                        {recordTypeLabel(r.type)}
+                      </Badge>
+                      {r.content}
+                    </p>
+                    <DeleteForm
+                      action={deleteRecord}
+                      hiddenFields={{ id: r.id }}
+                      confirmMessage="이 기록을 삭제할까요? 첨부파일도 함께 삭제됩니다."
+                      className="shrink-0 rounded-lg px-2 py-1 text-xs text-danger hover:bg-danger/10"
+                    />
+                  </div>
+                  {filledPortfolioFields.length > 0 && (
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-xs text-ink-muted">
+                        포트폴리오 상세 보기
+                      </summary>
+                      <dl className="mt-2 space-y-2 text-sm">
+                        {filledPortfolioFields.map((field) => (
+                          <div key={field.value}>
+                            <dt className="text-xs text-ink-secondary">{field.label}</dt>
+                            <dd className="whitespace-pre-wrap">{r[field.value]}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </details>
+                  )}
+                  <AttachmentList attachments={r.attachments} />
+                </Card>
+              );
+            })}
           </ul>
         )}
       </section>

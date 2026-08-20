@@ -41,14 +41,23 @@ model Course {
 }
 
 model Record {
-  id          Int          @id @default(autoincrement())
-  userId      String
-  courseId    Int
-  type        String // "assignment" | "exam" | "project" | "other"
-  content     String
-  createdAt   DateTime     @default(now())
-  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  attachments Attachment[]
+  id             Int          @id @default(autoincrement())
+  userId         String
+  courseId       Int
+  type           String // "assignment" | "exam" | "project" | "other"
+  content        String
+  // 아래는 나중에 만들 "포트폴리오 자동 생성" 기능(7단계 스토리 구조)을 위해
+  // 미리 준비해두는 선택 입력 필드. 지금은 기록 폼에서 펼치기로 입력만 받고,
+  // 이 데이터를 실제로 글로 재구성하는 기능은 아직 없다.
+  summary        String? // 소개: 한 줄 요약
+  background     String? // 배경/목적: 왜 이 활동을 하게 됐는지
+  process        String? // 과정: 어떤 액션을 했고 어떤 인사이트를 얻었는지
+  outcome        String? // 결과물: 최종적으로 만들어낸 것
+  growth         String? // 성장한 점
+  competencyNote String? // 나의 역량: 느낀 점, 배운 점, 다짐
+  createdAt      DateTime     @default(now())
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attachments    Attachment[]
 
   @@index([userId])
 }
@@ -77,7 +86,7 @@ model Competency {
 
 // 과목 x 역량 분석 결과
 model CourseCompetency {
-  id              Int    @id @default(autoincrement())
+  id              Int     @id @default(autoincrement())
   courseId        Int
   competencyId    Int
   score           Int // 매칭 강도 (키워드 매칭 횟수 기반)
