@@ -10,7 +10,7 @@ export type CompetencyAnalysisResult = {
   evidence: string | null;
 };
 
-const COMPETENCY_KEYS = COMPETENCY_DICTIONARY.map((c) => c.key) as [
+export const COMPETENCY_KEYS = COMPETENCY_DICTIONARY.map((c) => c.key) as [
   string,
   ...string[],
 ];
