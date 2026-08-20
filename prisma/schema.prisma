@@ -55,6 +55,7 @@ model Record {
   outcome        String? // 결과물: 최종적으로 만들어낸 것
   growth         String? // 성장한 점
   competencyNote String? // 나의 역량: 느낀 점, 배운 점, 다짐
+  narrative      Json? // LLM이 생성한 7단계 내러티브({ intro, background, process, outcome, growth, competency }). null = 아직 생성 안 됨.
   createdAt      DateTime     @default(now())
   course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   attachments    Attachment[]
