@@ -11,8 +11,8 @@ export type RecordNarrative = {
   competency: string;
 };
 
-// 화면(app/portfolio/page.tsx)과 PDF(app/portfolio/pdf/route.tsx)가 공유하는
-// 표시 순서 + 한글 라벨. 여기 한 곳에서만 정의한다.
+// 화면(app/portfolio/[id]/page.tsx)과 PDF(app/portfolio/[id]/pdf/route.tsx)가
+// 공유하는 표시 순서 + 한글 라벨. 여기 한 곳에서만 정의한다.
 export const NARRATIVE_SECTION_LABELS: { key: keyof RecordNarrative; label: string }[] = [
   { key: "intro", label: "소개" },
   { key: "background", label: "배경/목적" },

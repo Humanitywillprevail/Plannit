@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Target } from "lucide-react";
+import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
 import { buildPickerSemesters } from "@/lib/portfolio/pickerData";
 import { createPortfolio } from "@/lib/actions/portfolios";
@@ -12,6 +14,35 @@ export const instant = false;
 
 export default async function NewPortfolioPage() {
   const userId = await requireUserId();
+
+  // 콜드 스타트 게이트: /portfolio 목록 페이지와 동일한 기준(역량 분석된 과목
+  // 2개 미만이면 아예 시작을 막는다). /portfolio/new로 직접 진입해도 우회되지
+  // 않도록 create 플로우 진입점에도 동일하게 건다.
+  const eligibleCourses = await prisma.courseCompetency.findMany({
+    where: { course: { userId } },
+    select: { courseId: true },
+    distinct: ["courseId"],
+  });
+
+  if (eligibleCourses.length < 2) {
+    return (
+      <main className="mx-auto w-full max-w-3xl px-6 py-8">
+        <PageHeader title="새 포트폴리오 만들기" backHref="/portfolio" backLabel="포트폴리오 목록" />
+        <EmptyState
+          icon={<Target className="size-5" />}
+          message="아직 분석할 기록이 부족해요. 과목을 2개 이상 등록하면 포트폴리오를 만들 수 있어요."
+          action={
+            <Link href="/semesters">
+              <Button variant="secondary" size="sm">
+                과목 추가하러 가기
+              </Button>
+            </Link>
+          }
+        />
+      </main>
+    );
+  }
+
   const semesters = await buildPickerSemesters(userId);
 
   return (

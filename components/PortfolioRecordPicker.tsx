@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { generatePendingNarratives } from "@/lib/actions/portfolio";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -21,6 +22,7 @@ export default function PortfolioRecordPicker({
   semesters: PickerSemester[];
   initialSelectedIds?: number[];
 }) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const selected = new Set(initialSelectedIds);
 
@@ -57,6 +59,7 @@ export default function PortfolioRecordPicker({
                           onClick={() =>
                             startTransition(async () => {
                               await generatePendingNarratives([record.id]);
+                              router.refresh();
                             })
                           }
                         >

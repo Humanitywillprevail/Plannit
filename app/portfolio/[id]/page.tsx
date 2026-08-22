@@ -27,6 +27,7 @@ export default async function PortfolioDetailPage({
     where: { id: portfolioId, userId },
     include: {
       records: {
+        orderBy: { record: { createdAt: "desc" } },
         include: { record: { include: { course: { select: { name: true } } } } },
       },
     },

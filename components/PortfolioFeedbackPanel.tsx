@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { analyzePortfolio, type PortfolioFeedback } from "@/lib/actions/portfolios";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -67,11 +68,23 @@ export default function PortfolioFeedbackPanel({
             <div>
               <p className="mb-2 text-sm font-semibold">이런 활동을 추가해보세요</p>
               <ul className="space-y-2">
-                {feedback.recommendations.map((rec, i) => (
-                  <li key={i} className="text-sm text-ink-secondary">
-                    <span className="font-medium text-foreground">{rec.courseName}</span>
-                    {" — "}
-                    {rec.competencyName} 관련 활동이 있어요
+                {feedback.recommendations.map((rec) => (
+                  <li
+                    key={`${rec.courseId}-${rec.competencyKey}`}
+                    className="flex items-center justify-between gap-3 text-sm text-ink-secondary"
+                  >
+                    <span>
+                      <span className="font-medium text-foreground">{rec.courseName}</span>
+                      {" — "}
+                      {rec.competencyName} 관련 활동이 있어요
+                    </span>
+                    {rec.candidateRecordIds.length > 0 && (
+                      <Link href={`/portfolio/${portfolioId}/edit?preselect=${rec.candidateRecordIds.join(",")}`}>
+                        <Button variant="ghost" size="sm">
+                          고르러 가기
+                        </Button>
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

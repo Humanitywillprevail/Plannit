@@ -39,13 +39,15 @@ export function recommendActivities(
 
     for (const row of matchingRows) {
       if (recommendations.length >= MAX_RECOMMENDATIONS) break;
+      const candidateRecordIds = eligibleRecordsByCourse.get(row.course.id) ?? [];
+      if (candidateRecordIds.length === 0) continue;
       recommendations.push({
         courseId: row.course.id,
         courseName: row.course.name,
         competencyKey: gap.key,
         competencyName: gap.name,
         score: row.score,
-        candidateRecordIds: eligibleRecordsByCourse.get(row.course.id) ?? [],
+        candidateRecordIds,
       });
     }
   }

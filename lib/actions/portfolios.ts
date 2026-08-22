@@ -137,7 +137,7 @@ export async function analyzePortfolio(
   }
 
   const currentRows = await prisma.courseCompetency.findMany({
-    where: { courseId: { in: selectedCourseIds } },
+    where: { course: { userId }, courseId: { in: selectedCourseIds } },
     include: {
       competency: { select: { key: true, name: true, category: true } },
       course: { select: { id: true } },
