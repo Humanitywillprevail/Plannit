@@ -18,13 +18,11 @@ import { portfolioPendingWhere } from "@/lib/portfolio/queries";
 // 선택된 기록 중 narrative 없는 것만 생성할 때 사용). 생략하면 계정 전체
 // 대상으로 동작한다 — 과거 호출부 호환을 위한 것일 뿐, 새 코드는 항상
 // recordIds를 넘긴다.
-export async function generatePendingNarratives(recordIds?: number[]): Promise<void> {
+export async function generatePendingNarratives(recordIds: number[]): Promise<void> {
   const userId = await requireUserId();
 
   const pending = await prisma.record.findMany({
-    where: recordIds
-      ? { ...portfolioPendingWhere(userId), id: { in: recordIds } }
-      : portfolioPendingWhere(userId),
+    where: { ...portfolioPendingWhere(userId), id: { in: recordIds } },
     take: 5,
   });
 
