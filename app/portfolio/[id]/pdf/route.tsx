@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { Document, Page, Text, View, StyleSheet, Font, renderToBuffer } from "@react-pdf/renderer";
 import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
-import { portfolioGeneratedWhere } from "@/lib/portfolio/queries";
 import { NARRATIVE_SECTION_LABELS, type RecordNarrative } from "@/lib/analysis/generateNarrative";
 
 // @react-pdf/renderer는 한글 글리프를 기본 내장하지 않는다 — 등록 안 하면 한글이
@@ -21,25 +20,37 @@ const styles = StyleSheet.create({
   sectionBody: { lineHeight: 1.5 },
 });
 
-export async function GET() {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const portfolioId = Number(id);
   const userId = await requireUserId();
 
-  const records = await prisma.record.findMany({
-    where: portfolioGeneratedWhere(userId),
-    orderBy: { createdAt: "desc" },
-    include: { course: { select: { name: true } } },
+  const portfolio = await prisma.portfolio.findFirst({
+    where: { id: portfolioId, userId },
+    include: {
+      records: {
+        orderBy: { record: { createdAt: "desc" } },
+        include: { record: { include: { course: { select: { name: true } } } } },
+      },
+    },
   });
 
-  if (records.length === 0) {
-    return NextResponse.json(
-      { error: "생성된 포트폴리오가 없습니다." },
-      { status: 404 }
-    );
+  if (!portfolio) {
+    return NextResponse.json({ error: "포트폴리오를 찾을 수 없습니다." }, { status: 404 });
+  }
+
+  const generated = portfolio.records.map((pr) => pr.record).filter((r) => r.narrative !== null);
+
+  if (generated.length === 0) {
+    return NextResponse.json({ error: "생성된 포트폴리오 내용이 없습니다." }, { status: 404 });
   }
 
   const buffer = await renderToBuffer(
     <Document>
-      {records.map((r) => {
+      {generated.map((r) => {
         const narrative = r.narrative as unknown as RecordNarrative;
         return (
           <Page key={r.id} size="A4" style={styles.page}>

@@ -25,11 +25,3 @@ export function portfolioPendingWhere(userId: string): Prisma.RecordWhereInput {
     narrative: { equals: Prisma.DbNull },
   };
 }
-
-// narrative가 이미 생성된 대상 기록.
-export function portfolioGeneratedWhere(userId: string): Prisma.RecordWhereInput {
-  return {
-    ...portfolioEligibleWhere(userId),
-    narrative: { not: Prisma.DbNull },
-  };
-}

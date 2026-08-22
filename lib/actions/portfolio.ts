@@ -14,11 +14,13 @@ import { portfolioPendingWhere } from "@/lib/portfolio/queries";
 // 한 번 호출당 최대 5건만 처리한다 — 대기 건수가 많으면 서버리스 함수의
 // 실행 시간 제한을 넘길 수 있어서다. 5건보다 많이 남아 있으면 버튼을 다시
 // 눌러 다음 배치를 처리한다.
-export async function generatePendingNarratives(): Promise<void> {
+// recordIds로 범위를 좁혀서 처리한다 (포트폴리오 선택 화면에서 선택된 기록 중
+// narrative 없는 것만 생성할 때 사용).
+export async function generatePendingNarratives(recordIds: number[]): Promise<void> {
   const userId = await requireUserId();
 
   const pending = await prisma.record.findMany({
-    where: portfolioPendingWhere(userId),
+    where: { ...portfolioPendingWhere(userId), id: { in: recordIds } },
     take: 5,
   });
 

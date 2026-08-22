@@ -41,7 +41,7 @@ model Course {
 }
 
 model Record {
-  id             Int          @id @default(autoincrement())
+  id             Int               @id @default(autoincrement())
   userId         String
   courseId       Int
   type           String // "assignment" | "exam" | "project" | "other"
@@ -56,9 +56,10 @@ model Record {
   growth         String? // 성장한 점
   competencyNote String? // 나의 역량: 느낀 점, 배운 점, 다짐
   narrative      Json? // LLM이 생성한 7단계 내러티브({ intro, background, process, outcome, growth, competency }). null = 아직 생성 안 됨.
-  createdAt      DateTime     @default(now())
-  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt      DateTime          @default(now())
+  course         Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   attachments    Attachment[]
+  portfolios     PortfolioRecord[]
 
   @@index([userId])
 }
@@ -98,4 +99,30 @@ model CourseCompetency {
   competency Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, competencyId])
+}
+
+// 직무 타겟 포트폴리오. 사용자가 목표 직무 하나당 활동(Record)을 골라 담아서
+// 저장하는 단위. 같은 활동이 여러 포트폴리오에 동시에 들어갈 수 있다
+// (직무를 바꿔가며 여러 개 만드는 시나리오를 지원하기 위해 M:N으로 둔다).
+model Portfolio {
+  id            Int               @id @default(autoincrement())
+  userId        String
+  name          String
+  targetJobRole String
+  feedback      Json? // 마지막 analyzePortfolio 결과 스냅샷. null = 아직 분석 안 함.
+  analyzedAt    DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  records       PortfolioRecord[]
+
+  @@index([userId])
+}
+
+model PortfolioRecord {
+  portfolioId Int
+  recordId    Int
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  record      Record    @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@id([portfolioId, recordId])
 }
