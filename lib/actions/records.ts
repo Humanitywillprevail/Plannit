@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
 import { reanalyzeCourse } from "@/lib/analysis/reanalyze";
@@ -55,7 +56,9 @@ export async function addRecord(formData: FormData): Promise<void> {
   const record = await prisma.record.create({
     data: { userId, courseId, type, content, skillTags, ...portfolioFields },
   });
-  await reanalyzeCourse(courseId);
+  // 역량 재분석은 Haiku 호출 때문에 1~3초 걸리는데, 화면 어디에도 즉시 쓰이지
+  // 않으므로(강점 리포트는 숨겨진 상태) 저장 응답을 막지 않고 백그라운드로 돌린다.
+  after(() => reanalyzeCourse(courseId));
 
   const files = formData
     .getAll("files")
@@ -93,7 +96,7 @@ export async function deleteRecord(formData: FormData): Promise<void> {
   await Promise.all(
     record.attachments.map((a) => deleteUploadedFile(a.url))
   );
-  await reanalyzeCourse(record.courseId);
+  after(() => reanalyzeCourse(record.courseId));
 
   revalidatePath(`/courses/${record.courseId}`);
   revalidatePath(`/semesters/${record.course.semesterId}`);

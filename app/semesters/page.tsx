@@ -122,10 +122,14 @@ async function SemesterView({ userId }: { userId: string }) {
 }
 
 async function SkillView({ userId, tag }: { userId: string; tag?: string }) {
+  // 태그 목록과 태그별 기록 모두 같은 데이터에서 뽑아낼 수 있으므로,
+  // DB 왕복을 한 번으로 줄이기 위해 여기서 한 번만 조회한다.
   const records = await prisma.record.findMany({
     where: { userId },
-    select: { skillTags: true },
+    orderBy: { createdAt: "desc" },
+    include: { course: { include: { semester: true } } },
   });
+
   const customTags = Array.from(
     new Set(
       records.flatMap((r) => r.skillTags).filter((t) => !SKILL_TAG_PRESETS.includes(t))
@@ -133,13 +137,7 @@ async function SkillView({ userId, tag }: { userId: string; tag?: string }) {
   ).sort();
   const allTags = [...SKILL_TAG_PRESETS, ...customTags];
 
-  const taggedRecords = tag
-    ? await prisma.record.findMany({
-        where: { userId, skillTags: { has: tag } },
-        orderBy: { createdAt: "desc" },
-        include: { course: { include: { semester: true } } },
-      })
-    : [];
+  const taggedRecords = tag ? records.filter((r) => r.skillTags.includes(tag)) : [];
 
   return (
     <div className="space-y-4">
