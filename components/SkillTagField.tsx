@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
 
 export default function SkillTagField({
@@ -12,6 +12,18 @@ export default function SkillTagField({
 }) {
   const [selected, setSelected] = useState<string[]>(initialSelected);
   const [customInput, setCustomInput] = useState("");
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const form = rootRef.current?.closest("form");
+    if (!form) return;
+    const onReset = () => {
+      setSelected(initialSelected);
+      setCustomInput("");
+    };
+    form.addEventListener("reset", onReset);
+    return () => form.removeEventListener("reset", onReset);
+  }, [initialSelected]);
 
   function toggle(tag: string) {
     setSelected((prev) =>
@@ -29,7 +41,7 @@ export default function SkillTagField({
   const customTags = selected.filter((t) => !presets.includes(t));
 
   return (
-    <div>
+    <div ref={rootRef}>
       <div className="flex flex-wrap gap-1.5">
         {presets.map((tag) => {
           const active = selected.includes(tag);

@@ -113,3 +113,14 @@ rows just get an empty array).
   models.
 - The Haiku tag-suggestion assist (see above).
 - Any change to the `Competency`/`CourseCompetency` analysis pipeline.
+- Any record created after this branch ships will have all six of
+  `summary`/`background`/`process`/`outcome`/`growth`/`competencyNote`
+  permanently `null` (the add-record form no longer writes them), which
+  means `lib/portfolio/queries.ts`'s `portfolioEligibleWhere` — an `OR`
+  gate on those six fields being non-null — will never match those
+  records. Reactivating the AI-portfolio feature after this branch
+  requires updating that `OR` to also match on `skillTags` being
+  non-empty (e.g. `{ skillTags: { isEmpty: false } }`), or the picker
+  will silently show nothing for anything recorded in the interim. Not
+  fixed here because `lib/portfolio/` is this branch's hard do-not-touch
+  boundary.
