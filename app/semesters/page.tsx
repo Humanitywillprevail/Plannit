@@ -6,6 +6,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import GradeBadge from "@/components/ui/GradeBadge";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import CopyRecordButton from "@/components/CopyRecordButton";
 import QuickAddSemester from "@/components/QuickAddSemester";
 import { GraduationCap, Tags } from "lucide-react";
 import { computeGpa, formatGpa } from "@/lib/gpa";
@@ -174,10 +175,15 @@ async function SkillView({ userId, tag }: { userId: string; tag?: string }) {
           <ul className="space-y-2">
             {taggedRecords.map((r) => (
               <Card as="li" key={r.id} padded>
-                <p className="mb-1 text-xs text-ink-muted">
-                  {r.course.semester.name} · {r.course.name}
-                </p>
-                <p className="text-sm">{r.content}</p>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="mb-1 text-xs text-ink-muted">
+                      {r.course.semester.name} · {r.course.name}
+                    </p>
+                    <p className="text-sm">{r.content}</p>
+                  </div>
+                  <CopyRecordButton content={r.content} />
+                </div>
                 {r.skillTags.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {r.skillTags.map((t) => (

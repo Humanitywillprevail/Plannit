@@ -14,6 +14,7 @@ import {
 } from "@/lib/types";
 import StarRating from "@/components/ui/StarRating";
 import DeleteForm from "@/components/DeleteForm";
+import CopyRecordButton from "@/components/CopyRecordButton";
 import AttachmentList from "@/components/AttachmentList";
 import RecordTypeField from "@/components/RecordTypeField";
 import SkillTagField from "@/components/SkillTagField";
@@ -205,12 +206,15 @@ export default async function CourseDetailPage({
                       </Badge>
                       {r.content}
                     </p>
-                    <DeleteForm
-                      action={deleteRecord}
-                      hiddenFields={{ id: r.id }}
-                      confirmMessage="이 기록을 삭제할까요? 첨부파일도 함께 삭제됩니다."
-                      className="shrink-0 rounded-lg px-2 py-1 text-xs text-danger hover:bg-danger/10"
-                    />
+                    <div className="flex shrink-0 items-center gap-1">
+                      <CopyRecordButton content={r.content} />
+                      <DeleteForm
+                        action={deleteRecord}
+                        hiddenFields={{ id: r.id }}
+                        confirmMessage="이 기록을 삭제할까요? 첨부파일도 함께 삭제됩니다."
+                        className="rounded-lg px-2 py-1 text-xs text-danger hover:bg-danger/10"
+                      />
+                    </div>
                   </div>
                   {r.skillTags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
