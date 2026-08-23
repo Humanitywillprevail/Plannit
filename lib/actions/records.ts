@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db/client";
 import { requireUserId } from "@/lib/auth/session";
 import { reanalyzeCourse } from "@/lib/analysis/reanalyze";
+import { suggestSkillTags } from "@/lib/analysis/suggestSkillTags";
 import { deleteUploadedFile, saveUploadedFile, MAX_FILES_PER_UPLOAD } from "@/lib/files";
 import { PORTFOLIO_FIELD_OPTIONS } from "@/lib/types";
 
@@ -12,6 +13,17 @@ import { PORTFOLIO_FIELD_OPTIONS } from "@/lib/types";
 function readOptionalField(formData: FormData, key: string): string | null {
   const value = String(formData.get(key) ?? "").trim();
   return value || null;
+}
+
+// 로그인한 사용자만 호출 가능하게 막아둔다 — 인증 없이 열려있으면 누구든
+// 이 엔드포인트를 두드려서 Haiku 호출 비용을 발생시킬 수 있다.
+export async function suggestTagsForRecord(content: string): Promise<string[]> {
+  await requireUserId();
+  try {
+    return await suggestSkillTags(content);
+  } catch {
+    return [];
+  }
 }
 
 export async function addRecord(formData: FormData): Promise<void> {
