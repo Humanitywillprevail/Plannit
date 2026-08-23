@@ -154,25 +154,16 @@ export default async function CourseDetailPage({
                 className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
               />
             </div>
-            <details className="rounded-lg border border-line px-3 py-2">
-              <summary className="cursor-pointer text-sm text-ink-secondary">
-                포트폴리오용 상세 입력 (선택)
-              </summary>
-              <div className="mt-3 space-y-3">
-                {PORTFOLIO_FIELD_OPTIONS.map((field) => (
-                  <div key={field.value}>
-                    <label className="mb-1 block text-sm text-ink-secondary">
-                      {field.label}
-                    </label>
-                    <textarea
-                      name={field.value}
-                      rows={2}
-                      className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
-                    />
-                  </div>
-                ))}
-              </div>
-            </details>
+            <div>
+              <label className="mb-1 block text-sm text-ink-secondary">
+                나의 역량
+              </label>
+              <textarea
+                name="competencyNote"
+                rows={2}
+                className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
+              />
+            </div>
             <div>
               <label className="mb-1 block text-sm text-ink-secondary">
                 첨부파일{" "}
