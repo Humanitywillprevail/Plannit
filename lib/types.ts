@@ -1,3 +1,5 @@
+import { COMPETENCY_DICTIONARY } from "@/lib/analysis/keywordDictionary";
+
 export const RECORD_TYPE_OPTIONS = [
   { value: "assignment", label: "과제" },
   { value: "exam", label: "시험" },
@@ -40,3 +42,6 @@ export const PORTFOLIO_FIELD_OPTIONS = [
   { value: "growth", label: "성장한 점" },
   { value: "competencyNote", label: "나의 역량" },
 ] as const;
+
+// 역량 태그 선택 UI의 프리셋. 강점 리포트가 쓰는 12개 역량 사전을 그대로 재사용한다.
+export const SKILL_TAG_PRESETS = COMPETENCY_DICTIONARY.map((c) => c.name);

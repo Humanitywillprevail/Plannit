@@ -19,6 +19,14 @@ export async function addRecord(formData: FormData): Promise<void> {
   const courseId = Number(formData.get("courseId"));
   const type = String(formData.get("type") ?? "other");
   const content = String(formData.get("content") ?? "").trim();
+  const skillTags = Array.from(
+    new Set(
+      formData
+        .getAll("skillTags")
+        .map((t) => String(t).trim())
+        .filter(Boolean)
+    )
+  );
 
   if (!courseId || !content) return;
 
@@ -33,7 +41,7 @@ export async function addRecord(formData: FormData): Promise<void> {
   );
 
   const record = await prisma.record.create({
-    data: { userId, courseId, type, content, ...portfolioFields },
+    data: { userId, courseId, type, content, skillTags, ...portfolioFields },
   });
   await reanalyzeCourse(courseId);
 

@@ -56,6 +56,7 @@ model Record {
   growth         String? // 성장한 점
   competencyNote String? // 나의 역량: 느낀 점, 배운 점, 다짐
   narrative      Json? // LLM이 생성한 7단계 내러티브({ intro, background, process, outcome, growth, competency }). null = 아직 생성 안 됨.
+  skillTags      String[]          @default([]) // 역량 태그. 강점 리포트의 12개 프리셋 + 사용자 커스텀 태그가 섞여 들어간다.
   createdAt      DateTime          @default(now())
   course         Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   attachments    Attachment[]

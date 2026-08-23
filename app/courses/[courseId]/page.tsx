@@ -10,11 +10,13 @@ import {
   GRADE_OPTIONS,
   SELF_RATING_OPTIONS,
   PORTFOLIO_FIELD_OPTIONS,
+  SKILL_TAG_PRESETS,
 } from "@/lib/types";
 import StarRating from "@/components/ui/StarRating";
 import DeleteForm from "@/components/DeleteForm";
 import AttachmentList from "@/components/AttachmentList";
 import RecordTypeField from "@/components/RecordTypeField";
+import SkillTagField from "@/components/SkillTagField";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -156,13 +158,9 @@ export default async function CourseDetailPage({
             </div>
             <div>
               <label className="mb-1 block text-sm text-ink-secondary">
-                나의 역량
+                역량 태그
               </label>
-              <textarea
-                name="competencyNote"
-                rows={2}
-                className="w-full rounded-lg border border-line bg-transparent px-3 py-1.5 outline-none focus:border-accent"
-              />
+              <SkillTagField presets={SKILL_TAG_PRESETS} />
             </div>
             <div>
               <label className="mb-1 block text-sm text-ink-secondary">
@@ -214,6 +212,13 @@ export default async function CourseDetailPage({
                       className="shrink-0 rounded-lg px-2 py-1 text-xs text-danger hover:bg-danger/10"
                     />
                   </div>
+                  {r.skillTags.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {r.skillTags.map((tag) => (
+                        <Badge key={tag}>{tag}</Badge>
+                      ))}
+                    </div>
+                  )}
                   {filledPortfolioFields.length > 0 && (
                     <details className="mt-2">
                       <summary className="cursor-pointer text-xs text-ink-muted">
