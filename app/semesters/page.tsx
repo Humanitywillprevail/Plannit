@@ -4,9 +4,8 @@ import { requireUserId } from "@/lib/auth/session";
 import Card from "@/components/ui/Card";
 import EmptyState from "@/components/ui/EmptyState";
 import GradeBadge from "@/components/ui/GradeBadge";
-import Button from "@/components/ui/Button";
 import QuickAddSemester from "@/components/QuickAddSemester";
-import { GraduationCap, Sparkles, BookOpen } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { computeGpa, formatGpa } from "@/lib/gpa";
 
 // 로그인 사용자 전용 데이터라 정적 프리렌더 이점이 없다 — instant-navigation 검증에서 제외.
@@ -28,22 +27,8 @@ export default async function SemestersPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-8">
-      <div className="mb-6 flex items-center justify-between gap-3">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">학기 리스트</h1>
-        <div className="flex items-center gap-2">
-          <Link href="/report">
-            <Button variant="secondary" size="sm">
-              <Sparkles className="size-3.5" />
-              강점 리포트
-            </Button>
-          </Link>
-          <Link href="/portfolio">
-            <Button variant="secondary" size="sm">
-              <BookOpen className="size-3.5" />
-              포트폴리오
-            </Button>
-          </Link>
-        </div>
       </div>
 
       <div className="mb-4">
